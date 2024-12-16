@@ -51,7 +51,7 @@ class CBoard
 
 	int levels[SIZE_LEVEL_STOCK] = { 24,22,19,15,9,7,4 };
 public:
-	enum Board_Place { BOARDER, FLOOR, LADDER, FREE, OUT_OB};
+	enum Board_Place { BOARDER, FLOOR, LADDER, FREE, OUT_OB };
 
 	void Init();
 	void Draw(bool color);

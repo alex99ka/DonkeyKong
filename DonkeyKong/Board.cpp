@@ -56,7 +56,7 @@ void CBoard::Init()
 	while (loltr != nullptr)
 	{
 		int size = loltr->size;
-		int y_place = levels[loltr->level + 1];
+		int y_place = levels[loltr->level];
 		int x_place = loltr->index_of_Ladder;
 		for (int i = 0; i < size; i++)
 		{
@@ -194,9 +194,9 @@ int CBoard::CreateListOfLadders(ListOfLadders* lst, int size)
 {
 	int counter = 0;
 	Ladder* node;
-	int IndexOfLaddersArr[] = { 43,13,53,30,20,43,64 };
-	int AmountOfFLadders[] = { 1,2,1,1,1,1 };
-	int SizeOfLadderForLevel[] = { 3,4,6,5,3,2 };
+	int IndexOfLaddersArr[] = { 50,43,13,53,30,20,43,64 };
+	int AmountOfFLadders[] = { 1,1,2,1,1,1,1 };
+	int SizeOfLadderForLevel[] = { 2,3,4,6,5,3,2 };
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < AmountOfFLadders[i]; j++) // need to add a cheker for allocation and free functions for the list and nodes

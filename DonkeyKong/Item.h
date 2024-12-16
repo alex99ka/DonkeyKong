@@ -50,7 +50,6 @@ public:
 			m_Ydirection = 0;
 			break;
 		case UP:
-			m_Xdirection = 0;
 			m_Ydirection = -1;
 			break;
 		case DOWN:
@@ -71,6 +70,7 @@ public:
 	void Falling() { m_FallCounter++; }
 	int GetFallCounter() { return m_FallCounter;}
 	int GetMaxFall() { return m_MaxFall; }
+	void ResetFalling() { m_FallCounter = 0; }
 private:
 	char m_symbol;
 	CColorPoint::c_color m_color;

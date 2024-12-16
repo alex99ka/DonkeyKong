@@ -188,7 +188,7 @@ void CGame::PlayLoop()
 			//update mario on the map
 			//do the same for the barrles 
 			// print them all
-		if (CheckWhatIsBelow(m_mario, OnLadder) == DEAD)
+		/*if (CheckWhatIsBelow(m_mario, OnLadder) == DEAD)
 		{
 			m_mario.ReduceLife();
 			if (m_mario.GetLives() == 0)
@@ -196,7 +196,8 @@ void CGame::PlayLoop()
 				GameOverScreen();
 				return;
 			}
-		}
+		}*/
+	
 
 		switch(PlayerCheckNextCell(m_mario))
 		{
@@ -349,6 +350,7 @@ CGame :: LiveStatus CGame::CheckWhatIsBelow(CItem& character, bool OnLadder)
 	enum CBoard::Board_Place place = m_board.GetBoardPlace(BelowPos);
 	switch (place)
 	{
+	case CBoard::Board_Place::FLOOR:
 	case CBoard::Board_Place::FREE:
 		character.SetDirection(CItem::DOWN);
 		character.Falling();
@@ -360,6 +362,7 @@ CGame :: LiveStatus CGame::CheckWhatIsBelow(CItem& character, bool OnLadder)
 	default:
 		OnLadder = false;
 	}
+	character.ResetFalling();
 	return ALIVE;
 }
 
