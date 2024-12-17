@@ -6,6 +6,7 @@ class CGame
 {
 public: 
 	void Start();
+	
 private:
 	enum NeighboorType {NONE, BARREL, DONKEYKONG};
 	enum MenuDecision { GAME_START, GAME_END };
@@ -16,7 +17,7 @@ private:
 	static constexpr char AVATAR_BARREL = 'O';
 	static constexpr char AVATAR_DONKEYKONG = '&';
 	static constexpr int NUM_OF_BARRELS = 7;
-
+	
 	void PrintMenu(bool IsColored);
 	MenuDecision GetMenuDecision();
 	void PrintInstructions(bool wait = false);
@@ -24,20 +25,22 @@ private:
 	NeighboorType WhoSomeoneNextToMe(CPoint& point);
 	void StartGame();
 	void Init();
+	bool CanMove(CItem& character, CItem::Directions);
 	void PlayLoop();
 	MenuDecision Paused();
 	void PrintPauseMenu();
 	LiveStatus PlayerCheckNextCell(CItem &character);
 	LiveStatus CheckWhatIsBelow(CItem& character, bool OnLadder);
-	void GameOverScreen();
 	bool m_IsColored = true;
 	CItem m_mario;
 	CItem m_donkeykong;
-	std::vector<CItem> m_barrels;
+	CItem m_barrels;
+	void ExplosionAnimation(int x, int y, CItem& mario);
 	CBoard m_board;
 };
 
 
+void GameOverScreen();
 
 
 

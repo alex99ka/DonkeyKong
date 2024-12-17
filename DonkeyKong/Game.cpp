@@ -1,423 +1,390 @@
-#include<iostream>
-#include<windows.h> // sleep and other stuff
-#include <conio.h> // For _kbhit() and _getch and go to 
-#include "game.h"
+#include <iostream>
+#include <windows.h> // For Sleep and system commands
+#include <conio.h>   // For _kbhit() and _getch()
+#include "Game.h"
 #include "ColorPoint.h"
-#include "utils.h"
-
-
+#include "Utils.h"
 
 void CGame::Start()
 {
-	PrintMenu(true);
-	CGame::MenuDecision decision = GetMenuDecision();
-	if (decision== GAME_END)
-	{
-		PrintGoodbye();
-		return;
-	}
-	system("cls");
-	StartGame();
-	PlayLoop();
+    PrintMenu(true);
+    CGame::MenuDecision decision = GetMenuDecision();
+
+    if (decision == GAME_END)
+    {
+        PrintGoodbye();
+        return;
+    }
+    system("cls");
+    StartGame();
+    PlayLoop();
 }
 
 void CGame::PrintMenu(bool isColored)
 {
-	system("cls");
+    system("cls");
 
-	CColoredPrint::prl("Hello, guy!\n");
-	CColoredPrint::prl("Welcome to Donkey Kong game\n", CColorPoint::c_color::BLUE, CColorPoint::c_decoration::BOLD);
-	CColoredPrint::prl("Please select one of the follwing options : ", CColorPoint::c_color::CYAN, CColorPoint::c_decoration::BOLD);
+    CColoredPrint::prl("Hello, Player!\n");
+    CColoredPrint::prl("Welcome to Donkey Kong Game\n", CColorPoint::c_color::BLUE, CColorPoint::c_decoration::BOLD);
+    CColoredPrint::prl("Please select one of the following options:\n", CColorPoint::c_color::CYAN, CColorPoint::c_decoration::BOLD);
 
-	CColoredPrint::prl("1 - Start a new game", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
-	if (isColored)
-		CColoredPrint::prl("2 - Turn off color", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
-	else
-		CColoredPrint::prl("2 - Turn on color", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
-	CColoredPrint::prl("8 - Present instructions and keys", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
-	CColoredPrint::prl("9 - exit", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
+    CColoredPrint::prl("1 - Start a New Game", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
+    if (isColored)
+        CColoredPrint::prl("2 - Turn Off Color", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
+    else
+        CColoredPrint::prl("2 - Turn On Color", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
+    CColoredPrint::prl("8 - Instructions and Keys", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
+    CColoredPrint::prl("9 - Exit", CColorPoint::c_color::GREEN, CColorPoint::c_decoration::ITALIC);
 }
 
-CGame::MenuDecision CGame:: GetMenuDecision()
+CGame::MenuDecision CGame::GetMenuDecision()
 {
-	char choice;
-	bool color = true;
+    char choice;
+    bool color = true;
 
-	while (true)
-	{
-		if (_kbhit())
-		{
-		 choice = _getch();
-		 switch (choice)
-		 {
-		 case '1':
-			 this->m_IsColored = color;
-			 return  CGame::GAME_START;
-		 case '2':
-			 color = !color; // toggle 
-			 PrintMenu(color);
-			 break;
-		 case '8':
-			 PrintInstructions();
-			 break;
-		 case '9':
-			 return CGame::GAME_END;
-	
-			default:
-				cout << "your choice is not legal input"<< endl;
-		 }
-		}
-	}
-	return GAME_END;
+    while (true)
+    {
+        if (_kbhit())
+        {
+            choice = _getch();
+            switch (choice)
+            {
+            case '1':
+                this->m_IsColored = color;
+                return GAME_START;
+            case '2':
+                color = !color; // Toggle color
+                PrintMenu(color);
+                break;
+            case '8':
+                PrintInstructions();
+                break;
+            case '9':
+                return GAME_END;
+            default:
+                std::cout << "Your choice is not a valid input." << std::endl;
+            }
+        }
+    }
+    return GAME_END;
 }
 
 void CGame::PrintInstructions(bool wait)
 {
-	CColoredPrint::prl("\nGame instructions and keys\n", CColoredPrint::c_color::YELLOW);
-	CColoredPrint::prl("When the game starts, Mario(the hero) is positioned at his start position without any movement.");
-	CColoredPrint::prl("Once you selects move direction(using the keys, as listed below)");
-	CColoredPrint::prl("Mario will continue to move in this direction even if the user does not press any key");
-	CColoredPrint::prl("as long as game board boundaries are not reached and the STAY key is not pressed.");
-	CColoredPrint::prl("KEYS :", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BLINK);
-	CColoredPrint::pr("LEFT :			", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
-	CColoredPrint::prl("a or A", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::ITALIC);
-	CColoredPrint::pr("RIGHT :			", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
-	CColoredPrint::prl("d or D", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::ITALIC);
-	CColoredPrint::pr("UP / JUMP :		", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
-	CColoredPrint::prl("w or W", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::ITALIC);
-	CColoredPrint::pr("DOWN :			", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
-	CColoredPrint::prl("x or X", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::ITALIC);
-	CColoredPrint::pr("STAY :			", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
-	CColoredPrint::prl("s or S", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::ITALIC);
-	CColoredPrint::prl("\nPausing a game:", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::UNDERLINE);
-	CColoredPrint::prl("Pressing the ESC key during a game pauses the game.");
-	CColoredPrint::prl("When the game is at pause state, pressing ESC again would continue the game");
-	CColoredPrint::prl("\nExit a game:", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::UNDERLINE);
-	CColoredPrint::prl("You can exit the game via the Pause menu");
+    CColoredPrint::prl("\nGame Instructions and Keys:\n", CColoredPrint::c_color::YELLOW);
+    CColoredPrint::prl("Mario (the hero) starts at his position and will move according to your commands.");
+    CColoredPrint::prl("KEYS:", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BLINK);
 
-	while (wait == true)
-	{
-		if (_kbhit())
-		{
-			if (_getch() == ESC_KEY) // ASCII code for ESC key
-			{
-				system("cls");
-				PrintPauseMenu();
-				return;
-			}
-		}
-	}
-}
+    CColoredPrint::pr("LEFT:  ", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
+    CColoredPrint::prl("a or A");
+    CColoredPrint::pr("RIGHT: ", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
+    CColoredPrint::prl("d or D");
+    CColoredPrint::pr("UP:    ", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
+    CColoredPrint::prl("w or W");
+    CColoredPrint::pr("DOWN:  ", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
+    CColoredPrint::prl("x or X");
+    CColoredPrint::pr("STAY:  ", CColoredPrint::c_color::GREEN, CColoredPrint::c_decoration::BOLD);
+    CColoredPrint::prl("s or S");
 
+    CColoredPrint::prl("\nTo pause the game: Press ESC.");
+    CColoredPrint::prl("To exit: Use the Pause menu.");
 
-void CGame::PrintGoodbye()
-{
-	CColoredPrint::prl("Goodbye, friend!\n", CColoredPrint::c_color::CYAN);
+    if (wait)
+    {
+        std::cout << "\nPress ESC to continue..." << std::endl;
+        while (true)
+        {
+            if (_kbhit() && _getch() == ESC_KEY)
+                break;
+        }
+    }
 }
 
 void CGame::StartGame()
 {
-	Init();
-	m_board.Draw(m_IsColored);
+    Init();
+    m_board.Draw(m_IsColored);
 }
 
 void CGame::Init()
 {
-	m_board.Init();
-	m_mario = CItem(2, m_board.GetBorderHight() - 3, AVATAR_MARIO, m_IsColored ? CColorPoint::c_color::GREEN : CColorPoint::c_color::WHITE); // reset mario to the bottom 
-	m_mario.SetLives(MARIO_LIVES);
-	m_donkeykong = CItem(m_board.GetBorderWidth()/2,2, AVATAR_DONKEYKONG, m_IsColored ? CColorPoint::c_color::CYAN : CColorPoint::c_color::WHITE);
+    m_board.Init();
+    m_mario = CItem(2, m_board.GetBorderHight() - 3, AVATAR_MARIO, m_IsColored ? CColorPoint::c_color::GREEN : CColorPoint::c_color::WHITE);
+    m_mario.SetLives(MARIO_LIVES);
+
+    m_donkeykong = CItem(m_board.GetBorderWidth() / 2, 2, AVATAR_DONKEYKONG, m_IsColored ? CColorPoint::c_color::CYAN : CColorPoint::c_color::WHITE);
+}
+
+
+bool CGame::CanMove(CItem & character, CItem::Directions dir)
+    {
+        CPoint newPos(character.GetX(), character.GetY());
+
+        // Calculate the next position based on the direction
+        switch (dir)
+        {
+        case CItem::LEFT:
+            newPos.SetX(newPos.GetX() - 1);
+            break;
+        case CItem::RIGHT:
+            newPos.SetX(newPos.GetX() + 1);
+            break;
+        case CItem::UP:
+            newPos.SetY(newPos.GetY() - 1);
+            break;
+        case CItem::DOWN:
+            newPos.SetY(newPos.GetY() + 1);
+            break;
+        default:
+            return false;
+        }
+
+        // Check if the new position is valid (not a border or obstacle)
+        CBoard::Board_Place place = m_board.GetBoardPlace(newPos);
+        return !(place == CBoard::BOARDER || place == CBoard::FLOOR);
+    }
+
+void CGame:: ExplosionAnimation(int x, int y, CItem& mario)
+{
+    const char* explosionFrames[] = {
+        " @ ",
+        "@@@",
+        " @ ",
+        
+    };
+
+    for (int i = 0; i < 3; ++i)
+    {
+        GoToXY(x - 1, y);
+        CColoredPrint::prl(explosionFrames[0], CColorPoint::c_color::RED, CColoredPrint::c_decoration::BOLD);
+        GoToXY(x - 1, y + 1);
+        CColoredPrint::prl(explosionFrames[1], CColorPoint::c_color::YELLOW, CColoredPrint::c_decoration::BOLD);
+        GoToXY(x - 1, y + 2);
+        CColoredPrint::prl(explosionFrames[2], CColorPoint::c_color::RED, CColoredPrint::c_decoration::BOLD);
+
+        Sleep(100);
+        GoToXY(x - 1, y);     std::cout << "   ";
+        GoToXY(x - 1, y + 1); 
+        CColoredPrint::prl("===", CColorPoint::c_color::YELLOW, CColoredPrint::c_decoration::BOLD);
+        GoToXY(x - 1, y + 2); std::cout << "  ";
+    }
+
+    // Check if Mario is within explosion radius
+    int marioX = mario.GetX();
+    int marioY = mario.GetY();
+    int distance = abs(marioX - x) + abs(marioY - y);
+
+    if (distance <= 2)
+    {
+        GameOverScreen();
+    }
 }
 
 void CGame::PlayLoop()
-{
-	bool Mario(true), Italian(true);
-	bool OnLadder(false);
-	char input, previnput('\0');	
+    {
+        bool isGameRunning = true;
+        char input = '\0';
+        hideCursor();
 
-	hideCursor();
-	m_mario.Draw();
-	m_donkeykong.Draw();
-	while (Mario = Italian) 
-	{
-		if (_kbhit())
-		{
-			input = _getch();
-			if (input != previnput)
-			{
-				switch (input)
-				{
-				case 'a':
-				case 'A':
-					m_mario.SetDirection(CItem::LEFT); // 
-					break;
-				case 'd':
-				case 'D':
-					m_mario.SetDirection(CItem::RIGHT);
-					break;
-				case 'w':
-				case 'W':
-					m_mario.SetDirection(CItem::UP);
-					break; 
-				case 'x':
-				case 'X':
-					m_mario.SetDirection(CItem::DOWN);
-					break;
-				case 's':
-				case 'S':
-					m_mario.SetDirection(CItem::STOP);
-					break;
-				case ESC_KEY:
-				{///
-					if (Paused() == GAME_END)
-						return;
-					break;
-				}
-				default:
-					// ignore illegal input
-					break;
-				}
-				if (input != ESC_KEY)
-					previnput = input; // remember the prev input 
-			}
-		} 
-			// first delete then ask what next and update m_next_symbol then adavance the object and then draw
+        // Initial Draw
+        m_mario.Draw();
+        m_donkeykong.Draw();
 
-			// ask what besides mario
-			//ask what below mario
-			//update mario on the map
-			//do the same for the barrles 
-			// print them all
-		/*if (CheckWhatIsBelow(m_mario, OnLadder) == DEAD)
-		{
-			m_mario.ReduceLife();
-			if (m_mario.GetLives() == 0)
-			{
-				GameOverScreen();
-				return;
-			}
-		}*/
-	
+        // Get the middle X position of the board
+        int centerX = m_board.GetBorderWidth() / 2;
+        int topY = 1; // Highest level of the board
 
-		switch(PlayerCheckNextCell(m_mario))
-		{
-		case DEAD:
-			m_mario.ReduceLife();
-			if (m_mario.GetLives() == 0)
-			{
-				GameOverScreen();
-				return;
-			}
-			break;
-		case WON:
-			// function that will celebrate the winner
-			return;
-		case ALIVE:
-			if (m_mario.IsStop() == false) {
-				m_mario.SetX(m_mario.GetX() + m_mario.GetXDirection());
-				m_mario.SetY(m_mario.GetY() + m_mario.GetYDirection());
-				m_mario.Draw();
-			}
-		} 
-		std::cout.flush(); 
-		Sleep(100);
-	}
+        // Barrels Initialization: Both start at the center of the top level
+        CItem barrelRight(centerX, topY, AVATAR_BARREL, CColorPoint::c_color::WHITE);
+        barrelRight.SetDirection(CItem::RIGHT);
+
+        CItem barrelLeft(centerX, topY, AVATAR_BARREL, CColorPoint::c_color::WHITE);
+        barrelLeft.SetDirection(CItem::LEFT);
+
+        int fallCounterRight = 0;
+        int fallCounterLeft = 0;
+
+        while (isGameRunning)
+        {
+            // --- Handle Mario Input ---
+            if (_kbhit())
+            {
+                input = _getch();
+                switch (input)
+                {
+                case 'a': case 'A':
+                    if (CanMove(m_mario, CItem::LEFT))
+                        m_mario.SetDirection(CItem::LEFT);
+                    break;
+                case 'd': case 'D':
+                    if (CanMove(m_mario, CItem::RIGHT))
+                        m_mario.SetDirection(CItem::RIGHT);
+                    break;
+                case 'w': case 'W':
+                {
+                    CPoint checkPosUp(m_mario.GetX(), m_mario.GetY() - 1);
+                    if (m_board.GetBoardPlace(checkPosUp) == CBoard::LADDER)
+                        m_mario.SetDirection(CItem::UP);
+                    break;
+                }
+                case 'x': case 'X':
+                {
+                    CPoint checkPosDown(m_mario.GetX(), m_mario.GetY() + 1);
+                    if (m_board.GetBoardPlace(checkPosDown) == CBoard::LADDER)
+                        m_mario.SetDirection(CItem::DOWN);
+                    break;
+                }
+                case 's': case 'S':
+                    m_mario.SetDirection(CItem::STOP);
+                    break;
+                case ESC_KEY:
+                    if (Paused() == GAME_END)
+                        return;
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            // --- Update Mario Movement ---
+            m_mario.Erase();
+            if (CanMove(m_mario, m_mario.GetDirection()))
+            {
+                m_mario.SetX(m_mario.GetX() + m_mario.GetXDirection());
+                m_mario.SetY(m_mario.GetY() + m_mario.GetYDirection());
+            }
+            else
+            {
+                m_mario.SetDirection(CItem::STOP);
+            }
+            m_mario.Draw();
+
+            // --- Barrel Right Movement ---
+            barrelRight.Erase();
+            CPoint belowRight(barrelRight.GetX(), barrelRight.GetY() + 1);
+            if (m_board.GetBoardPlace(belowRight) == CBoard::FREE) // Barrel falls
+            {
+                barrelRight.SetDirection(CItem::DOWN);
+                fallCounterRight++;
+            }
+            else if (fallCounterRight >= 8 || m_board.GetBoardPlace(CPoint(barrelRight.GetX() + 1, barrelRight.GetY())) == CBoard::BOARDER)
+            {
+                ExplosionAnimation(barrelRight.GetX(), barrelRight.GetY(), m_mario); // Check explosion radius
+                barrelRight.SetX(centerX);
+                barrelRight.SetY(topY);
+                barrelRight.SetDirection(CItem::RIGHT);
+                fallCounterRight = 0;
+            }
+
+            // --- Barrel Left Movement ---
+            barrelLeft.Erase();
+            CPoint belowLeft(barrelLeft.GetX(), barrelLeft.GetY() + 1);
+            if (m_board.GetBoardPlace(belowLeft) == CBoard::FREE) // Barrel falls
+            {
+                barrelLeft.SetDirection(CItem::DOWN);
+                fallCounterLeft++;
+            }
+            else if (fallCounterLeft >= 8 || m_board.GetBoardPlace(CPoint(barrelLeft.GetX() - 1, barrelLeft.GetY())) == CBoard::BOARDER)
+            {
+                ExplosionAnimation(barrelLeft.GetX(), barrelLeft.GetY(), m_mario); // Check explosion radius
+                barrelLeft.SetX(centerX);
+                barrelLeft.SetY(topY);
+                barrelLeft.SetDirection(CItem::LEFT);
+                fallCounterLeft = 0;
+            }
+            else
+            {
+                barrelLeft.SetDirection(CItem::LEFT);
+            }
+            barrelLeft.SetX(barrelLeft.GetX() + barrelLeft.GetXDirection());
+            barrelLeft.SetY(barrelLeft.GetY() + barrelLeft.GetYDirection());
+            barrelLeft.Draw();
+
+            // --- Check Collision with Mario ---
+            if ((barrelRight.GetX() == m_mario.GetX() && barrelRight.GetY() == m_mario.GetY()) ||
+                (barrelLeft.GetX() == m_mario.GetX() && barrelLeft.GetY() == m_mario.GetY()))
+            {
+               GameOverScreen();
+                return;
+            }
+
+            // --- Frame Delay ---
+            std::cout.flush();
+            Sleep(100); // Smooth updates
+        }
+    }
 
 
-
-}
 
 
 CGame::MenuDecision CGame::Paused()
 {
-	bool flag(true);
-	char choice, prevchioce= '\0';
+    system("cls");
+    PrintPauseMenu();
 
-	system("cls");
-	PrintPauseMenu();
-
-	while (flag)
-	{
-		if (_kbhit())
-		{
-			choice = _getch();
-			if (prevchioce != choice)
-			{
-				switch (choice)
-				{
-					case ESC_KEY:
-					{
-						system("cls");
-						m_board.Draw(m_IsColored);
-						return GAME_START; // just continue the game
-					}
-					case '1':
-					{
-						system("cls");
-						PrintInstructions(true);
-						break;
-					}
-					case '2':
-					{
-						PrintGoodbye();
-						return GAME_END;
-					}
-				}
-			}
-		}
-	}
-	return GAME_START;
+    while (true)
+    {
+        if (_kbhit())
+        {
+            char choice = _getch();
+            if (choice == ESC_KEY)
+                return GAME_START;
+            else if (choice == '2')
+                return GAME_END;
+        }
+    }
 }
 
-void CGame::PrintPauseMenu() 
+void CGame::PrintPauseMenu()
 {
-	const char* PauseMenu[] = {
-		"********************************************************************************",
-		"*                                                                              *",
-		"*                               GAME PAUSED                                    *",
-		"*                                                                              *",
-		"********************************************************************************",
-		"*                                                                              *",
-		"*                            [ESC] Resume Game                                 *",
-		"*                                                                              *",
-		"*                            [1] Instructions                                  *",
-		"*                                                                              *",
-		"*                            [2] Quit Game                                     *",
-		"*                                                                              *",
-		"********************************************************************************",
-		"*                                                                              *",
-		"*                   Use the indicated keys to make your selection              *",
-		"*                                                                              *",
-		"********************************************************************************"
-	};
-
-	for (const char* line : PauseMenu) {
-		std::cout << line << std::endl;
-	}
+    std::cout << "*******************************\n";
+    std::cout << "*          GAME PAUSED        *\n";
+    std::cout << "* [ESC] Resume Game           *\n";
+    std::cout << "* [2] Quit Game               *\n";
+    std::cout << "*******************************\n";
 }
 
-
-
-CGame::NeighboorType CGame::WhoSomeoneNextToMe(CPoint& point)
+void CGame::PrintGoodbye()
 {
-	// here the game will check all the barrels location and boarder /// check if donkey kong there
-	return CGame::NeighboorType::NONE;
+    CColoredPrint::prl("Goodbye, Player!\n", CColoredPrint::c_color::CYAN);
 }
-// checks what in cell next to the direction of the player
-CGame::LiveStatus CGame::PlayerCheckNextCell(CItem &character)
+
+
+void GameOverScreen()
 {
-	char symbol;
-	CColorPoint::c_color color;
-	CPoint newPos(character.GetX() + character.GetXDirection(), character.GetY() + character.GetYDirection());
-	enum CBoard::Board_Place place  = m_board.GetBoardPlace(newPos);
-	switch (place) {
-	case CBoard::Board_Place::BOARDER:
-	case CBoard::Board_Place::FLOOR:
-		character.SetDirection(CItem::STOP);
-		break;
-	case CBoard::Board_Place::LADDER:
-		//break;
-	case CBoard::Board_Place::FREE:
-	default:
-	{
-		CGame::NeighboorType neigboorType;
-		neigboorType = WhoSomeoneNextToMe(newPos);
-		switch (neigboorType)
-		{
-		case CGame::NeighboorType::NONE:
-			if (character.IsStop() == false) {
-				m_board.GetBoardCh(character, &symbol, &color);
-				character.SeRestoreSymbol(symbol, color);
-				character.Erase();
-			}
-			break;;
-		case CGame::NeighboorType::BARREL:
-			return DEAD;
-		case CGame::NeighboorType::DONKEYKONG:
-			return WON;
+    system("cls"); // Clear the screen
 
-		}
-		break;
-	}
+    // ASCII art for Game Over Screen
+    const char* gameOverArt[] = {
+        "         _______",
+        "      .-'       `-.",
+        "     /             \\",
+        "    /               \\",
+        "   |   GAME OVER!    |",
+        "   |                 |",
+        "   |    TRY AGAIN    |",
+        "   |                 |",
+        "    \\               /",
+        "     \\_____________/",
+        "         ||     ||",
+        "         ||     ||",
+        "      ###############",
+        "      #             #",
+        "      ###############",
+        "",
+        " PRESS ANY KEY TO CONTINUE..."
+    };
 
-	}
-	return ALIVE;
+    // Print the Game Over screen with color
+    for (int i = 0; i < 17; ++i)
+    {
+        if (i == 5 || i == 6) // Highlight GAME OVER and TRY AGAIN lines
+            CColoredPrint::prl(gameOverArt[i], CColorPoint::c_color::RED, CColorPoint::c_decoration::BOLD);
+        else
+            CColoredPrint::prl(gameOverArt[i]);
+    }
+
+    // Wait for any key press to continue
+    _getch();
+    exit(0);
 }
-
-CGame :: LiveStatus CGame::CheckWhatIsBelow(CItem& character, bool OnLadder)
-{
-	CPoint BelowPos(character.GetX(), character.GetY() + 1);
-	enum CBoard::Board_Place place = m_board.GetBoardPlace(BelowPos);
-	switch (place)
-	{
-	case CBoard::Board_Place::FLOOR:
-	case CBoard::Board_Place::FREE:
-		character.SetDirection(CItem::DOWN);
-		character.Falling();
-		if (character.GetFallCounter() >= character.GetMaxFall())
-			return DEAD;
-	case CBoard::Board_Place::LADDER:
-		OnLadder = true;
-		break;
-	default:
-		OnLadder = false;
-	}
-	character.ResetFalling();
-	return ALIVE;
-}
-
-
-void CGame::GameOverScreen()
-{
-	// Clear the screen
-	system("cls");
-
-	// ASCII art for a gravestone with Mario's name
-	const char* art[] = {
-		"         _______",
-		"      .-'       `-.",
-		"     /             \\",
-		"    /               \\",
-		"   |   RIP MARIO     |",
-		"   |                 |",
-		"   |    1981-2023    |",
-		"   |                 |",
-		"    \\               /",
-		"     \\_____________/",
-		"         ||     ||",
-		"         ||     ||",
-		"      ###############",
-		"      #             #",
-		"      ###############",
-		"",
-		"        GAME OVER!",
-		"",
-		" PRESS ANY KEY TO RETURN"
-	};
-
-	// Print the gravestone
-	if (m_IsColored) {
-		// Print in color
-		for (int i = 0; i < 15; ++i) {
-			if (i < 12) {
-				CColoredPrint::prl(art[i], CColoredPrint::c_color::WHITE); // Base
-			}
-			else if (i == 16) {
-				CColoredPrint::prl(art[i], CColoredPrint::c_color::RED, CColoredPrint::c_decoration::BOLD); // Game Over
-			}
-			else if (i == 18) {
-				CColoredPrint::prl(art[i], CColoredPrint::c_color::YELLOW, CColoredPrint::c_decoration::ITALIC); // Press any key
-			}
-			else {
-				CColoredPrint::prl(art[i]); // Default
-			}
-		}
-	}
-	else {
-		// Print in black and white
-		for (const char* line : art) {
-			CColoredPrint::prl(line); // Default black and white
-		}
-	}
-}
-

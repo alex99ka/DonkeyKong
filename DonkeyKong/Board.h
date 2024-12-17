@@ -17,6 +17,7 @@ typedef struct LIST
 	Spaces* tail;
 }List;
 
+
 //a node that states where to put each Ladder and wich type of Ladder we need?
 typedef struct Ladder {
 	int level;
@@ -57,8 +58,9 @@ public:
 	void Draw(bool color);
 	int GetBorderHight() { return BORDER_HIGHT; };
 	int GetBorderWidth() { return BORDER_WIDTH; };
-	enum Board_Place GetBoardPlace(CPoint& const point);
-	bool GetBoardCh(CPoint& coord, char* symbol, CColorPoint::c_color* color);
+	bool ValidatePoint(const CPoint& point);
+	enum Board_Place GetBoardPlace(const CPoint& point);
+	bool GetBoardCh(const CPoint& coord, char* symbol, CColorPoint::c_color* color);
 
 private:
 	//void RestoreBoard
@@ -77,6 +79,7 @@ private:
 	void FreeListLadderNode(ListOfLadders* lst);
 	CColorPoint::c_color GetCharColor(char ch);
 	char workBoard[BORDER_HIGHT][BORDER_WIDTH];
+	
 
 };
 
